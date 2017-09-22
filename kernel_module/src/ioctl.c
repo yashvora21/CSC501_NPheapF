@@ -80,7 +80,7 @@ long is_locked(__u64 offset) {
     return 0;
 }
 
-node_list* find_object(struct npheap_cmd cmd) {
+struct node_list* find_object(struct npheap_cmd cmd) {
     //lock the existing node
     struct node_list *tmp;
     struct list_head *pos, *q;
