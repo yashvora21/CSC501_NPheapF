@@ -80,6 +80,21 @@ long is_locked(__u64 offset) {
     return 0;
 }
 
+node_list* find_object(struct npheap_cmd cmd) {
+    //lock the existing node
+    struct node_list *tmp;
+    struct list_head *pos, *q;
+    // traverse through list and lock the current unocked node
+    // https://isis.poly.edu/kulesh/stuff/src/klist/
+    list_for_each_safe(pos, q, &ndlist.list) {
+        tmp = list_entry(pos, struct node_list, list);
+        if((cmd.offset >> PAGE_SHIFT) == tmp->cmd.offset) {
+            return tmp;
+        }
+    }
+    return NULL;
+}
+
 long npheap_lock(struct npheap_cmd __user *user_cmd)
 {
     struct npheap_cmd cmd;
@@ -110,7 +125,7 @@ long npheap_lock(struct npheap_cmd __user *user_cmd)
         struct list_head *pos, *q;
         // traverse through list and lock the current unocked node
         // https://isis.poly.edu/kulesh/stuff/src/klist/
-        list_for_each_safe(pos, q, &ndlist.list) {
+        /*list_for_each_safe(pos, q, &ndlist.list) {
             tmp = list_entry(pos, struct node_list, list);
             if((cmd.offset >> PAGE_SHIFT) == tmp->cmd.offset) {
                 printk("node exists and unlocked, now locked %zu\n",tmp->cmd.offset);
@@ -118,6 +133,13 @@ long npheap_lock(struct npheap_cmd __user *user_cmd)
                 mutex_lock(&(tmp->lock));
                 return 1;   //pass
             }
+        }*/
+        tmp = find_object(cmd);
+        if(tmp != NULL) {
+            printk("node exists and unlocked, now locked %zu\n",tmp->cmd.offset);
+            tmp->cmd.op = 0;
+            mutex_lock(&(tmp->lock));
+            return 1;
         }
     }
 //    mutex_lock(&lock);
@@ -133,7 +155,7 @@ long npheap_unlock(struct npheap_cmd __user *user_cmd)
     struct node_list *tmp;
     struct list_head *pos, *q;
     // iterte through list and unlock the requested node
-    list_for_each_safe(pos, q, &ndlist.list) {
+    /*list_for_each_safe(pos, q, &ndlist.list) {
         tmp = list_entry(pos, struct node_list, list);
         //check if offset is same and it was locked before
         if((cmd.offset >> PAGE_SHIFT) == tmp->cmd.offset && tmp->cmd.op == 0) {
@@ -142,6 +164,13 @@ long npheap_unlock(struct npheap_cmd __user *user_cmd)
             mutex_unlock(&(tmp->lock)); // unlocking current node
             return 1;   //pass
         }
+    }*/
+    tmp = find_object(cmd);
+    if(tmp != NULL && tmp->cmd.op == 0) {
+        tmp->cmd.op = 1;
+        printk("node %zu , unlocked\n", tmp->cmd.offset);
+        mutex_unlock(&(tmp->lock)); // unlocking current node
+        return 1;
     }
 //    mutex_unlock(&lock);
     return 0;   //fail
@@ -156,12 +185,16 @@ long npheap_getsize(struct npheap_cmd __user *user_cmd)
 	struct node_list *tmp;
 	struct list_head *pos, *q;
     // iterating through list to check if node associated with requested offset exists, if yes return it's size
-	list_for_each_safe(pos, q, &ndlist.list) {
+	/*list_for_each_safe(pos, q, &ndlist.list) {
         tmp = list_entry(pos, struct node_list, list);
         if ((cmd.offset >> PAGE_SHIFT) == tmp->cmd.offset){
             return tmp->cmd.size; // return current node size
         }
-	}
+	}*/
+    tmp = find_object(cmd);
+    if(tmp != NULL) {
+        return tmp->cmd.size;
+    }
 	return 0; // node not found, size is 0
 }
 
@@ -174,7 +207,7 @@ long npheap_delete(struct npheap_cmd __user *user_cmd)
     struct node_list *tmp;
     struct list_head *pos, *q;
     // iterate through linked list and kfree data of associated offset node
-    list_for_each_safe(pos, q, &ndlist.list) {
+    /*list_for_each_safe(pos, q, &ndlist.list) {
         tmp = list_entry(pos, struct node_list, list);
         //check if offset is same and its unlocked
         // if found and is unlocked
@@ -190,6 +223,15 @@ long npheap_delete(struct npheap_cmd __user *user_cmd)
             tmp->cmd.data = NULL;
             return 1;
         }
+    }*/
+    tmp = find_object(cmd);
+    if(tmp != NULL && tmp->cmd.op == 0) {
+        //Delete Code
+        printk(KERN_INFO "deleting node %zu\n",tmp->cmd.offset);
+        tmp->cmd.size = 0;
+        kfree(tmp->cmd.data); 
+        tmp->cmd.data = NULL;
+        return 1;
     }
     return 0;
 }
