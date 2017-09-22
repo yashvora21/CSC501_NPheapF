@@ -59,7 +59,7 @@ struct node_list {
 // https://en.wikipedia.org/wiki/External_variable 
 extern struct node_list ndlist;
 
-extern struct mutex lock;
+//extern struct mutex lock;
 
 // check if node is already locked, return true: 1 , false:2, does not exist:0
 long is_locked(__u64 offset) {
@@ -93,7 +93,6 @@ long npheap_lock(struct npheap_cmd __user *user_cmd)
     if(isLock == 0) {
         // node does not exist, create one and lock it
         //creade new node
-        mutex_lock(&lock);
         struct node_list *tmp;
         tmp = (struct node_list *)kmalloc(sizeof(struct node_list), GFP_KERNEL);
         tmp->cmd.offset = cmd.offset >> PAGE_SHIFT;
@@ -104,7 +103,6 @@ long npheap_lock(struct npheap_cmd __user *user_cmd)
         mutex_lock(&(tmp->lock)); // lock current node mutex
         list_add(&(tmp->list), &(ndlist.list)); // add current node to linked list
         //https://isis.poly.edu/kulesh/stuff/src/klist/
-        mutex_unlock(&lock);
         return 1;   //pass
     } else if(isLock == 2) {
         //lock the existing node
@@ -122,6 +120,7 @@ long npheap_lock(struct npheap_cmd __user *user_cmd)
             }
         }
     }
+//    mutex_lock(&lock);
     return 0;   //fail
 }     
 
@@ -150,7 +149,6 @@ long npheap_unlock(struct npheap_cmd __user *user_cmd)
 
 long npheap_getsize(struct npheap_cmd __user *user_cmd)
 {
-    mutex_lock(&lock);
     struct npheap_cmd cmd;
     if(copy_from_user(&cmd, user_cmd, sizeof(*user_cmd))) {
         return -1;
@@ -164,13 +162,11 @@ long npheap_getsize(struct npheap_cmd __user *user_cmd)
             return tmp->cmd.size; // return current node size
         }
 	}
-    mutex_unlock(&lock);
 	return 0; // node not found, size is 0
 }
 
 long npheap_delete(struct npheap_cmd __user *user_cmd)
 {
-    mutex_lock(&lock);
     struct npheap_cmd cmd;
     if(copy_from_user(&cmd, user_cmd, sizeof(*user_cmd))) {
         return -1;
@@ -195,7 +191,6 @@ long npheap_delete(struct npheap_cmd __user *user_cmd)
             return 1;
         }
     }
-    mutex_unlock(&lock);
     return 0;
 }
 
