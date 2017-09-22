@@ -1,3 +1,4 @@
+//// Project 1: Mitkumar Pandya, mhpandya; Rachit Shrivastava, rshriva; Yash Vora, yvora;
 //////////////////////////////////////////////////////////////////////
 //                             North Carolina State University
 //
@@ -44,20 +45,23 @@
 #include <linux/mutex.h>
 #include <linux/list.h>
 
-
+// this is the node structure of our linked list data structure
 struct node_list {
-    struct npheap_cmd cmd;
-    struct mutex lock;
+    struct npheap_cmd cmd; // structure given in npheap.h
+    struct mutex lock; // mutex lock per node
     //long offset;
-    unsigned long km_addr_start;
-    unsigned long phys_addr;
-	//unsigned long size;
-    struct list_head list;
+    unsigned long phys_addr; // allocated physical address in kernel memory
+    //unsigned long size;
+    struct list_head list; // kernel linked list head reference // https://isis.poly.edu/kulesh/stuff/src/klist/
 };
 
+// accessing external variables defined in core.c file using extern 
+// https://en.wikipedia.org/wiki/External_variable 
 extern struct node_list ndlist;
-extern struct mutex lock;
 
+//extern struct mutex lock;
+
+// check if node is already locked, return true: 1 , false:2, does not exist:0
 long is_locked(__u64 offset) {
     struct node_list *tmp;
     struct list_head *pos, *q;
@@ -76,16 +80,18 @@ long is_locked(__u64 offset) {
     return 0;
 }
 
-// 
 long npheap_lock(struct npheap_cmd __user *user_cmd)
 {
     struct npheap_cmd cmd;
+    // copying user space struct to kernel 
+    //https://www.fsl.cs.sunysb.edu/kernel-api/re257.html
     if(copy_from_user(&cmd, user_cmd, sizeof(*user_cmd))) {
         return -1;
     }
-
+    // check if node is locked
     long isLock = is_locked(cmd.offset);
     if(isLock == 0) {
+        // node does not exist, create one and lock it
         //creade new node
         struct node_list *tmp;
         tmp = (struct node_list *)kmalloc(sizeof(struct node_list), GFP_KERNEL);
@@ -93,14 +99,17 @@ long npheap_lock(struct npheap_cmd __user *user_cmd)
         tmp->cmd.op = 0;
         tmp->cmd.size = 0;
         printk("initialized and locked node %zu\n",tmp->cmd.offset);
-        mutex_init(&(tmp->lock));
-        mutex_lock(&(tmp->lock));
-        list_add(&(tmp->list), &(ndlist.list));
+        mutex_init(&(tmp->lock)); // initializing current node mutex
+        mutex_lock(&(tmp->lock)); // lock current node mutex
+        list_add(&(tmp->list), &(ndlist.list)); // add current node to linked list
+        //https://isis.poly.edu/kulesh/stuff/src/klist/
         return 1;   //pass
     } else if(isLock == 2) {
         //lock the existing node
         struct node_list *tmp;
         struct list_head *pos, *q;
+        // traverse through list and lock the current unocked node
+        // https://isis.poly.edu/kulesh/stuff/src/klist/
         list_for_each_safe(pos, q, &ndlist.list) {
             tmp = list_entry(pos, struct node_list, list);
             if((cmd.offset >> PAGE_SHIFT) == tmp->cmd.offset) {
@@ -112,7 +121,6 @@ long npheap_lock(struct npheap_cmd __user *user_cmd)
         }
     }
 //    mutex_lock(&lock);
-
     return 0;   //fail
 }     
 
@@ -124,13 +132,14 @@ long npheap_unlock(struct npheap_cmd __user *user_cmd)
     }
     struct node_list *tmp;
     struct list_head *pos, *q;
+    // iterte through list and unlock the requested node
     list_for_each_safe(pos, q, &ndlist.list) {
         tmp = list_entry(pos, struct node_list, list);
         //check if offset is same and it was locked before
         if((cmd.offset >> PAGE_SHIFT) == tmp->cmd.offset && tmp->cmd.op == 0) {
             tmp->cmd.op = 1;
             printk("node %zu , unlocked\n", tmp->cmd.offset);
-            mutex_unlock(&(tmp->lock));
+            mutex_unlock(&(tmp->lock)); // unlocking current node
             return 1;   //pass
         }
     }
@@ -146,13 +155,14 @@ long npheap_getsize(struct npheap_cmd __user *user_cmd)
     }
 	struct node_list *tmp;
 	struct list_head *pos, *q;
+    // iterating through list to check if node associated with requested offset exists, if yes return it's size
 	list_for_each_safe(pos, q, &ndlist.list) {
         tmp = list_entry(pos, struct node_list, list);
         if ((cmd.offset >> PAGE_SHIFT) == tmp->cmd.offset){
-            return tmp->cmd.size;
+            return tmp->cmd.size; // return current node size
         }
 	}
-	return 0;
+	return 0; // node not found, size is 0
 }
 
 long npheap_delete(struct npheap_cmd __user *user_cmd)
@@ -163,19 +173,24 @@ long npheap_delete(struct npheap_cmd __user *user_cmd)
     }
     struct node_list *tmp;
     struct list_head *pos, *q;
+    // iterate through linked list and kfree data of associated offset node
     list_for_each_safe(pos, q, &ndlist.list) {
         tmp = list_entry(pos, struct node_list, list);
         //check if offset is same and its unlocked
+        // if found and is unlocked
         if((cmd.offset >> PAGE_SHIFT) == tmp->cmd.offset && tmp->cmd.op == 0) {
             //Delete Code
 	        printk(KERN_INFO "deleting node %zu\n",tmp->cmd.offset);
 	        //list_del(pos);
+            // make size 0
 	        tmp->cmd.size = 0;
-            kfree(tmp->cmd.data);
+            // free associated memory from kernel memory space
+            // https://www.kernel.org/doc/htmldocs/kernel-api/API-kfree.html
+            kfree(tmp->cmd.data); 
+            tmp->cmd.data = NULL;
             return 1;
         }
     }
-
     return 0;
 }
 
