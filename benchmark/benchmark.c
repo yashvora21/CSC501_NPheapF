@@ -78,12 +78,8 @@ int main(int argc, char *argv[])
     fprintf(fp,"D\t%d\t%ld\t%d\t%lu\t%s\n",pid,current_time.tv_sec * 1000000 + current_time.tv_usec,i,strlen(mapped_data),mapped_data);
     npheap_unlock(devfd,i);
     close(devfd);
-    //if(pid != 0)
-       // wait(NULL);
-	for(i=0;i<(number_of_processes-1) && pid != 0;i++)
-{
-wait(NULL);
-}
+    if(pid != 0)
+        wait(NULL);
     return 0;
 }
 
