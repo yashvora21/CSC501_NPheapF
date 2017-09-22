@@ -59,7 +59,7 @@ struct node_list {
 // https://en.wikipedia.org/wiki/External_variable 
 extern struct node_list ndlist;
 
-//extern struct mutex lock;
+extern struct mutex lock;
 
 // check if node is already locked, return true: 1 , false:2, does not exist:0
 long is_locked(__u64 offset) {

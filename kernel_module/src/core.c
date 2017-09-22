@@ -59,7 +59,7 @@ struct node_list {
 
 // initializing pointers
 struct node_list ndlist;
-//struct mutex lock;
+struct mutex lock;
 struct node_list *tmp;
 struct list_head *pos, *q;
 
@@ -152,7 +152,7 @@ int npheap_init(void)
 		// initializing kernel linked list
 		// https://isis.poly.edu/kulesh/stuff/src/klist/
 		INIT_LIST_HEAD(&ndlist.list);
-		//mutex_init(&lock);  // removed global lock
+		mutex_init(&lock);  // removed global lock
 		printk(KERN_ERR "\"npheap\" misc device installed\n");
 	}
 	return ret;
