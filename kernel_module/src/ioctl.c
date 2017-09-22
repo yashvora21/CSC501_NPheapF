@@ -227,10 +227,12 @@ long npheap_delete(struct npheap_cmd __user *user_cmd)
     tmp = find_object(cmd);
     if(tmp != NULL && tmp->cmd.op == 0) {
         //Delete Code
+        mutex_lock(&lock);
         printk(KERN_INFO "deleting node %zu\n",tmp->cmd.offset);
         tmp->cmd.size = 0;
         kfree(tmp->cmd.data); 
         tmp->cmd.data = NULL;
+        mutex_unlock(&lock);
         return 1;
     }
     return 0;
