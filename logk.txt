@@ -1,0 +1,105 @@
+[ 2761.953198] Actual size vs new size  8192 8192 
+[ 2963.498593] "npheap" misc device installed
+[ 2963.511608] initialized and locked node 0
+[ 2963.511615] Node 0 got: 8192 bytes of memory
+[ 2963.511651] found 0 0 
+[ 2963.511653] Actual size vs new size  8192 8192 
+[ 2963.512447] node 0 , unlocked
+[ 2963.512449] initialized and locked node 1
+[ 2963.512453] Node 1 got: 8192 bytes of memory
+[ 2963.513576] node 1 , unlocked
+[ 2963.513577] initialized and locked node 2
+[ 2963.513582] Node 2 got: 8192 bytes of memory
+[ 2963.513928] node exists and unlocked, now locked 0
+[ 2963.513934] found 0 0 
+[ 2963.513935] Actual size vs new size  8192 8192 
+[ 2963.516464] node 2 , unlocked
+[ 2963.516467] initialized and locked node 3
+[ 2963.516472] Node 3 got: 4096 bytes of memory
+[ 2963.516812] node 3 , unlocked
+[ 2963.516813] initialized and locked node 4
+[ 2963.516815] Node 4 got: 8192 bytes of memory
+[ 2963.517360] node 0 , unlocked
+[ 2963.517362] node exists and unlocked, now locked 1
+[ 2963.517366] found 1 1 
+[ 2963.517366] Actual size vs new size  8192 8192 
+[ 2963.518398] node 4 , unlocked
+[ 2963.518400] initialized and locked node 5
+[ 2963.518411] Node 5 got: 4096 bytes of memory
+[ 2963.518522] node 5 , unlocked
+[ 2963.518523] initialized and locked node 6
+[ 2963.518525] Node 6 got: 8192 bytes of memory
+[ 2963.519298] found 1 1 
+[ 2963.519301] Actual size vs new size  8192 8192 
+[ 2963.519468] node 6 , unlocked
+[ 2963.519469] initialized and locked node 7
+[ 2963.519473] Node 7 got: 4096 bytes of memory
+[ 2963.520264] node 7 , unlocked
+[ 2963.522250] node 1 , unlocked
+[ 2963.522252] node exists and unlocked, now locked 2
+[ 2963.522256] found 2 2 
+[ 2963.522257] Actual size vs new size  8192 8192 
+[ 2963.522260] found 2 2 
+[ 2963.522262] Actual size vs new size  8192 8192 node 2 , unlocked
+[ 2963.524079] node exists and unlocked, now locked 3
+[ 2963.524082] found 3 3 
+[ 2963.524084] found 3 3 
+[ 2963.524086] Actual size vs new size  4096 4096 
+[ 2963.524613] Actual size vs new size  4096 4096 node 3 , unlocked
+[ 2963.524615] node exists and unlocked, now locked 4
+[ 2963.524618] found 4 4 
+[ 2963.524618] Actual size vs new size  8192 8192 
+[ 2963.524625] found 4 4 
+[ 2963.524627] Actual size vs new size  8192 8192 
+[ 2963.525816] node exists and unlocked, now locked 0
+[ 2963.525822] found 0 0 
+[ 2963.525823] Actual size vs new size  8192 8192 
+[ 2963.527458] node 4 , unlocked
+[ 2963.527460] node exists and unlocked, now locked 5
+[ 2963.527464] found 5 5 
+[ 2963.527465] Actual size vs new size  4096 4096 node 5 , unlocked
+[ 2963.528283] node exists and unlocked, now locked 6
+[ 2963.528286] found 6 6 
+[ 2963.528287] Actual size vs new size  8192 8192 
+[ 2963.528887] node 0 , unlocked
+[ 2963.528888] node exists and unlocked, now locked 1
+[ 2963.528891] found 1 1 
+[ 2963.528892] Actual size vs new size  8192 8192 
+[ 2963.531414] node exists and unlocked, now locked 5
+[ 2963.531418] found 5 5 
+[ 2963.531419] Actual size vs new size  4096 4096 
+[ 2963.531981] node 6 , unlocked
+[ 2963.531983] node exists and unlocked, now locked 7
+[ 2963.531987] found 7 7 
+[ 2963.531988] Actual size vs new size  4096 4096 
+[ 2963.532327] node 5 , unlocked
+[ 2963.532328] node exists and unlocked, now locked 6
+[ 2963.532330] found 6 6 
+[ 2963.532331] Actual size vs new size  8192 8192 
+[ 2963.532905] node 7 , unlocked
+[ 2963.536136] node 1 , unlocked
+[ 2963.536138] node exists and unlocked, now locked 2
+[ 2963.536142] found 2 2 
+[ 2963.536143] Actual size vs new size  8192 8192 node 2 , unlocked
+[ 2963.540729] node exists and unlocked, now locked 3
+[ 2963.540734] found 3 3 
+[ 2963.540735] Actual size vs new size  4096 4096 
+[ 2963.541463] node 6 , unlocked
+[ 2963.541465] node exists and unlocked, now locked 7
+[ 2963.541470] found 7 7 
+[ 2963.541471] Actual size vs new size  4096 4096 
+[ 2963.541782] node 3 , unlocked
+[ 2963.541784] node exists and unlocked, now locked 4
+[ 2963.541788] found 4 4 
+[ 2963.541789] Actual size vs new size  8192 8192 
+[ 2963.542477] node 7 , unlocked
+[ 2963.544987] node 4 , unlocked
+[ 2963.544989] node exists and unlocked, now locked 5
+[ 2963.544993] found 5 5 
+[ 2963.544994] Actual size vs new size  4096 4096 node 5 , unlocked
+[ 2963.546071] node exists and unlocked, now locked 6
+[ 2963.546075] found 6 6 
+[ 2963.546076] Actual size vs new size  8192 8192 node 6 , unlocked
+[ 2963.549485] node exists and unlocked, now locked 7
+[ 2963.549489] found 7 7 
+[ 2963.549490] Actual size vs new size  4096 4096 node 7 , unlocked
